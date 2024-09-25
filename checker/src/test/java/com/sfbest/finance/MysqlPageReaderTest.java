@@ -7,6 +7,8 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Driver;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 class MysqlPageReaderTest {
@@ -48,6 +50,26 @@ class MysqlPageReaderTest {
         String[] files = processor.check(sort1,sort2);
         for (String file : files) {
             System.out.println(file);
+        }
+        List<DataDiffer> list = new LinkedList<>();
+        list.addAll(processor.readDiffer(files[0], DefaultCheckerProcessor.DifferType.DIFFER));
+        list.addAll(processor.readDiffer(files[1], DefaultCheckerProcessor.DifferType.ONE_MORE));
+        list.addAll(processor.readDiffer(files[2], DefaultCheckerProcessor.DifferType.TWO_MORE));
+
+        for (DataDiffer dataDiffer : list) {
+            if(dataDiffer.getOne() != null){
+                System.out.print(dataDiffer.getOne().getKey()+"       ");
+                System.out.print(dataDiffer.getOne().getValue()+"       ");
+                //System.out.println();
+            }else{
+                System.out.print("------------");
+                System.out.print("----------");
+            }
+            if(dataDiffer.getTwo()!=null){
+                System.out.print(dataDiffer.getTwo().getKey()+"       ");
+                System.out.print(dataDiffer.getTwo().getValue()+"       ");
+            }
+            System.out.println();
         }
     }
 

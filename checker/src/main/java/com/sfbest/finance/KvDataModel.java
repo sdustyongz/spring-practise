@@ -48,4 +48,11 @@ public class KvDataModel implements  Comparable{
         return  dataModel.getKey()+kvSplitorText+dataModel.getValue();
     }
 
+    @Override
+    public String toString() {
+        return "KvDataModel{" +
+                "key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }

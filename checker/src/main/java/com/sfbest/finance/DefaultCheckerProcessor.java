@@ -16,7 +16,7 @@ public class DefaultCheckerProcessor {
 
     final static int MAX_LINES = 1000000;
 
-    final static String DIFFER_DATA_SPLIT = "&&&&&$$@@&&&^^!@!";
+    final static String DIFFER_DATA_SPLIT = "#!!&&@@#";
 
     public DefaultCheckerProcessor(String fileBasePath) {
         this.fileBasePath = fileBasePath;
@@ -141,4 +141,37 @@ public class DefaultCheckerProcessor {
         }
 
     }
+
+    public enum DifferType{
+        DIFFER,ONE_MORE,TWO_MORE;
+    }
+
+    public List<DataDiffer> readDiffer(String differPath,DifferType differType) throws IOException {
+        BufferedReader reader  = new BufferedReader(new InputStreamReader(new FileInputStream(differPath),"utf-8"));
+        String line;
+        List<DataDiffer> differList = new LinkedList<>();
+        while((line = reader.readLine()) != null){
+            switch (differType){
+                case DIFFER:
+                    String[] datas = line.split(DIFFER_DATA_SPLIT);
+                    if(datas.length >= 2){
+                        KvDataModel kvDataModel1 = KvDataModel.convert(datas[0],DefaultCheckDataSerializer.KV_SPLIT);
+                        KvDataModel kvDataModel2 = KvDataModel.convert(datas[1],DefaultCheckDataSerializer.KV_SPLIT);
+                        differList.add(new DataDiffer(kvDataModel1,kvDataModel2));
+                    }
+                    break;
+                case ONE_MORE:
+                    KvDataModel kvDataModel1 = KvDataModel.convert(line,DefaultCheckDataSerializer.KV_SPLIT);
+                    differList.add(new DataDiffer(kvDataModel1,null));
+                    break;
+                case TWO_MORE:
+                    KvDataModel kvDataModel2 = KvDataModel.convert(line,DefaultCheckDataSerializer.KV_SPLIT);
+                    differList.add(new DataDiffer(null,kvDataModel2));
+                    break;
+            }
+        }
+        return differList;
+    }
+
+
 }
