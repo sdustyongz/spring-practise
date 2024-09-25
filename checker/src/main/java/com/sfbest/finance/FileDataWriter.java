@@ -8,17 +8,17 @@ import java.io.PrintWriter;
 public class FileDataWriter<T> implements Writer<T> {
 
     PrintWriter writer;
-    CheckDataConvert<T> dataFormatter;
+    CheckDataKvSerializer<T> dataSerializer;
 
-    public FileDataWriter(String path, CheckDataConvert<T> dataFormatter) throws IOException {
+    public FileDataWriter(String path, CheckDataKvSerializer<T> dataSerializer) throws IOException {
         this.writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(path),"utf-8"));
-        this.dataFormatter = dataFormatter;
+        this.dataSerializer = dataSerializer;
     }
 
 
     @Override
     public void write(T data) {
-        writer.println(dataFormatter.serialization(data));
+        writer.println(dataSerializer.serialize(data));
     }
 
     @Override

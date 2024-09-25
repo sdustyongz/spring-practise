@@ -5,35 +5,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- *  将Map类型的对象 根据 keyPropertyNames  和 valuePropertyNames的配置 处理成一行数据
- */
-public class DefaultCheckDataConvert implements CheckDataConvert<Map<String,?>> {
+public class DefaultCheckDataSerializer implements CheckDataKvSerializer<Map<String,Object>> {
 
     List<String> keyPropertyNames = null;
     List<String> valuePropertyNames = null;
 
-    String propertySplitor;
-    static final String KV_SPLIT = "!###@@&&&";
+    String propertySplitor = ",";
+    public static final String KV_SPLIT = "#!@@&&&#";
 
-    public DefaultCheckDataConvert(List<String> mainColumns, List<String> valueColumns, String propertySplitor) {
-        this.keyPropertyNames = mainColumns;
-        this.valuePropertyNames = valueColumns;
-        this.propertySplitor = propertySplitor;
+    public DefaultCheckDataSerializer(List<String> keyPropertyNames, List<String> valuePropertyNames) {
+        this.keyPropertyNames = keyPropertyNames;
+        this.valuePropertyNames = valuePropertyNames;
+        this.propertySplitor="#&&&#";
     }
 
-
     @Override
-    public String serialization(Map<String, ?> data) {
+    public String serialize(Map<String,Object> data) {
         String main = keyPropertyNames.stream().map(column->data.get(column).toString()).collect(Collectors.joining(propertySplitor));
         String value = valuePropertyNames.stream().map(column->data.get(column).toString()).collect(Collectors.joining(propertySplitor));
         return  main+KV_SPLIT+value;
     }
 
     @Override
-    public Map<String, String> parse(String data) {
+    public Map<String,Object> deSerialiization(String data) {
         String[] kv = data.split(KV_SPLIT);
-        Map<String,String> map = new HashMap<>();
+        Map<String,Object> map = new HashMap<>();
         if(kv.length  >= 2){
             String[] keys = kv[0].split(propertySplitor);
             String[] values = kv[1].split(propertySplitor);
@@ -49,13 +45,9 @@ public class DefaultCheckDataConvert implements CheckDataConvert<Map<String,?>> 
     }
 
     @Override
-    public CheckDataModel convert(String data) {
-        String[] kv = data.split(KV_SPLIT);
-        return new CheckDataModel(kv[0],kv[1]);
+    public String getKvSplitor() {
+        return KV_SPLIT;
     }
 
-    @Override
-    public String formatter(CheckDataModel dataModel) {
-        return  dataModel.getKey()+KV_SPLIT+dataModel.getValue();
-    }
+
 }

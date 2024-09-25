@@ -32,8 +32,8 @@ class MysqlPageReaderTest {
         Reader<Map<String,Object>> reader1 = new MysqlPageReader(ds,"select * from  a",1);
         Reader<Map<String,Object>> reader2 = new MysqlPageReader(ds,"select * from  b",1);
         Map<String,Object> map;
-        FileDataWriter writer1 = new FileDataWriter("data1.txt",new DefaultCheckDataConvert(Arrays.asList("name"),Arrays.asList("val"),","));
-        FileDataWriter writer2 = new FileDataWriter("data2.txt",new DefaultCheckDataConvert(Arrays.asList("name"),Arrays.asList("vall"),","));
+        FileDataWriter writer1 = new FileDataWriter("data1.txt",new DefaultCheckDataSerializer(Arrays.asList("name"),Arrays.asList("val")));
+        FileDataWriter writer2 = new FileDataWriter("data2.txt",new DefaultCheckDataSerializer(Arrays.asList("name"),Arrays.asList("vall")));
         while((map = reader1.get()) != null){
             writer1.write(map);
         }
@@ -42,7 +42,7 @@ class MysqlPageReaderTest {
             writer2.write(map);
         }
         writer2.close();
-        FileCheckerProcessor processor = new FileCheckerProcessor(".",new DefaultCheckDataConvert(Arrays.asList("id"),Arrays.asList("name"),","));
+        DefaultCheckerProcessor processor = new DefaultCheckerProcessor(".");
         String sort1= processor.sortToFile("data1.txt");
         String sort2 = processor.sortToFile("data2.txt");
         String[] files = processor.check(sort1,sort2);

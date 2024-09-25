@@ -8,9 +8,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FileCheckerProcessor {
+public class DefaultCheckerProcessor {
 
-    CheckDataConvert convert;
+
 
     String fileBasePath;
 
@@ -18,9 +18,8 @@ public class FileCheckerProcessor {
 
     final static String DIFFER_DATA_SPLIT = "&&&&&$$@@&&&^^!@!";
 
-    public FileCheckerProcessor(String fileBasePath,CheckDataConvert convert) {
+    public DefaultCheckerProcessor(String fileBasePath) {
         this.fileBasePath = fileBasePath;
-        this.convert = convert;
     }
 
     /**
@@ -36,9 +35,9 @@ public class FileCheckerProcessor {
             Path resultPath = Paths.get(fileBasePath,path+"_sort.txt");
             int lineCount = 0 ;
             String line ;
-            List<CheckDataModel> list = new LinkedList<>();
+            List<KvDataModel> list = new LinkedList<>();
             while((line = reader.readLine()) != null){
-                CheckDataModel data = convert.convert(line);
+                KvDataModel data = KvDataModel.convert(line,DefaultCheckDataSerializer.KV_SPLIT);
                 list.add(data);
                 if(++lineCount > MAX_LINES){
                     throw new RuntimeException("核对文件超过100W，暂不支持");
@@ -46,8 +45,8 @@ public class FileCheckerProcessor {
             }
             Collections.sort(list);
             writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(resultPath.toFile()),"utf-8"));
-            for (CheckDataModel checkDataModel : list) {
-                writer.println(convert.formatter(checkDataModel));
+            for (KvDataModel checkDataModel : list) {
+                writer.println(KvDataModel.formatter(checkDataModel,DefaultCheckDataSerializer.KV_SPLIT));
             }
             reader.close();
             writer.close();
@@ -88,8 +87,8 @@ public class FileCheckerProcessor {
             twoMoreFileWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(twoMoreFileName),"utf-8"));
 
             while(line1 != null && line2 != null){
-                CheckDataModel model1 = convert.convert(line1);
-                CheckDataModel model2 = convert.convert(line2);
+                KvDataModel model1 = KvDataModel.convert(line1,DefaultCheckDataSerializer.KV_SPLIT);
+                KvDataModel model2 = KvDataModel.convert(line2,DefaultCheckDataSerializer.KV_SPLIT);
                 if(model1.getKey().equals(model2.getKey())){
                     if(!model1.getValue().equals(model2.getValue())){
                         //记录到差异文件
