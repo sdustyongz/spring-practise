@@ -20,4 +20,9 @@ public class FileDataWriter<T> implements Writer<T> {
     public void write(T data) {
         writer.println(dataFormatter.serialization(data));
     }
+
+    @Override
+    public void close() {
+        writer.close();
+    }
 }

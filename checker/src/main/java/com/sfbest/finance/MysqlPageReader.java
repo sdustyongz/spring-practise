@@ -41,6 +41,11 @@ public class MysqlPageReader implements Reader<Map<String,Object>>{
         return null;
     }
 
+    @Override
+    public void close() {
+
+    }
+
     private List<Map<String,Object>> query(){
         JdbcTemplate template  = new JdbcTemplate(dataSource);
          int start = page*pageSize;

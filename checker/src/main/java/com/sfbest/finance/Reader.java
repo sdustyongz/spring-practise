@@ -6,4 +6,5 @@ package com.sfbest.finance;
  */
 public interface Reader<T> {
     T get();
+    void close();
 }
