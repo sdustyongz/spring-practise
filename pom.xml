@@ -15,6 +15,7 @@
         <module>websocket</module>
         <module>checker</module>
         <module>netty-demo</module>
+        <module>mybatis-generator</module>
     </modules>
 
 </project>
